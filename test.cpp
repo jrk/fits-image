@@ -16,11 +16,11 @@ int main (int argc, char const *argv[])
     Func out;
     Var x, y;
     
-    out(x,y) = in(x,y) / 256.f; // some random math
+    out(x,y) = in(x,y) * 1.001f; // some random math
     
     Image<float> res = out.realize(in.width(), in.height());
 
-    save(res, "test.png");
+    save_fits(Buffer(res).raw_buffer(), "test.fits");
 
     return 0;
 }

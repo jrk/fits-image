@@ -42,6 +42,7 @@ typedef struct buffer_t {
 
 #endif
 
+// TODO: stop exiting, instead return NULL data pointers, etc.
 void printerror( int status)
 {
     /*****************************************************/
@@ -103,6 +104,37 @@ buffer_t load_fits(const char *filename) {
     }
 
     return buf;
+}
+
+// Just float for now
+void save_fits(const buffer_t *buf, const char *filename) {
+    assert(buf->elem_size == sizeof(float));
+    
+    fitsfile *outfptr;
+    int status = 0;
+    
+    fits_create_file(&outfptr, filename, &status);
+    
+    if (status) {    
+        printerror(status);
+    }
+
+    int naxis = 0;
+    int npixels = 1;
+    for (int i = 0; i < 4; i++) {
+        if (!buf->extent[i]) break;
+        naxis++;
+        npixels *= buf->extent[i];
+    }
+    long naxes[] = { buf->extent[0], buf->extent[1], buf->extent[2], buf->extent[3] };
+
+    fits_create_img(outfptr, FLOAT_IMG, naxis, naxes, &status);
+    
+    fits_write_img(outfptr, TFLOAT, 1, npixels, buf->host, &status);
+    
+    if (status) {
+        printerror(status);
+    }
 }
 
 #endif
