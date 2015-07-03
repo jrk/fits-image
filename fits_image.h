@@ -115,7 +115,7 @@ void save_fits(const buffer_t *buf, const char *filename) {
     
     fits_create_file(&outfptr, filename, &status);
     
-    if (status) {    
+    if (status) {
         printerror(status);
     }
 
@@ -131,6 +131,8 @@ void save_fits(const buffer_t *buf, const char *filename) {
     fits_create_img(outfptr, FLOAT_IMG, naxis, naxes, &status);
     
     fits_write_img(outfptr, TFLOAT, 1, npixels, buf->host, &status);
+    
+    fits_close_file(outfptr, &status);
     
     if (status) {
         printerror(status);
